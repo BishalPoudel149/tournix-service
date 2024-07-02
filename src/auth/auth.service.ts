@@ -5,13 +5,21 @@ import { constrainedMemory } from "process";
 import { User } from "src/database/database.schemas";
 import { AuthDto } from "./dto";
 import * as argon from 'argon2';
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
+import { JwtService } from "@nestjs/jwt";
+import { UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AuthService{
 
   constructor(
-    @InjectModel('UserModel') private readonly userModel:Model<User>
+    //injecting the uerModel to use /play with model
+    @InjectModel('UserModel') private readonly userModel:Model<User>,
+
+    
+    private jwtService:JwtService,
+    private config:ConfigService,
+
   ){}
 
  async signup(dto:AuthDto){
@@ -26,7 +34,9 @@ export class AuthService{
       passwordHash: hash,
     });
     const savedUser = await newUser.save();
-    return savedUser;
+
+    return this.signToken(savedUser.id,savedUser.email);
+    
   } catch (error) {
    if(error.code === 11000 ){
     throw new ConflictException ('Email Already Exist , Try Logging in ')
@@ -37,7 +47,7 @@ export class AuthService{
 
 }
 
-    async signin(dto:AuthDto){
+    async signin(dto:AuthDto):Promise<{ access_token: string }>{
       const user = await this.userModel.findOne({email:dto.email});
       if(!user)
         throw new ForbiddenException('Username Not found')
@@ -47,15 +57,20 @@ export class AuthService{
           throw new ForbiddenException('Invalid Credentials');
          }
 
-    // Convert Mongoose document to plain object
-    const userObj = user.toObject();
-    delete userObj.passwordHash;
-
-    // Return user object without passwordHash
-    return userObj;
-    
-  
+   // create the jwt and return token
+    return this.signToken(user.id,user.email);
+   
     };
+
+    async signToken( userId:string,email:string):Promise<{ access_token: string }>{
+      const payload ={sub:userId,useremail:email};
+      const secret =this.config.get('JWT_SECRET');
+      const token = await this.jwtService.signAsync(payload,{ expiresIn:'15m',secret:secret} )
+
+      return {access_token:token}
+     
+
+    }
 
    
 }

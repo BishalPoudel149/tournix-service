@@ -12,7 +12,10 @@ import { ConfigModule } from '@nestjs/config';
     UserModule, 
     BookmarkModule,
     MongooseModule.forRoot('mongodb://localhost:27017/mymongodb'),
-    DatabaseModule
+    DatabaseModule,
+    ConfigModule.forRoot({
+      isGlobal:true
+    }),
   ],
 })
 export class AppModule {}

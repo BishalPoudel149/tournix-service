@@ -8,6 +8,7 @@ import { UserSchema, BookmarkSchema } from './database.schemas';
         MongooseModule.forFeature([{name:'UserModel',schema:UserSchema}]),
         MongooseModule.forFeature([{name:'BookmarkModel',schema:BookmarkSchema}])
     ],
-    exports :[MongooseModule]
+    exports :[MongooseModule],
+    providers: []
 })
 export class DatabaseModule {}

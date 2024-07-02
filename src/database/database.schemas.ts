@@ -28,6 +28,7 @@ export const BookmarkSchema = new Schema(
   {
   title:{type:String,required:true},
   description:{type:String,required:false},
+  link:{type:String,requiredL:true},
   user :{type:mongoose.Types.ObjectId,ref:'UserModel',required:true}
 },
 {
@@ -42,5 +43,6 @@ export interface Bookmark{
   id:string,
   title:string,
   description?:string,
+  link:string,
   user:User
 }
