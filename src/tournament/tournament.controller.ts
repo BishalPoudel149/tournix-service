@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TournamentService } from './tournament.service';
 import { GetUser } from 'src/decorator/user.decorator';
@@ -19,5 +19,11 @@ export class TournamentController {
     @Get(':category')
     getTournament(@Param('category') gameCategory:string){
         return this._tournamentService.getTournament(gameCategory);
+    }
+
+    @UseGuards(AuthGuard)
+    @Put(':id')
+    deactivateTournament(@Param('id') id:string){
+        return this._tournamentService.deactivateTournament(id);
     }
 }

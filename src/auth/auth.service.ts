@@ -32,6 +32,8 @@ export class AuthService{
     const newUser = new this.userModel({
       email: dto.email,
       passwordHash: hash,
+      //by default assign player role while signup 
+      role:'player'
     });
     const savedUser = await newUser.save();
 

@@ -1,20 +1,28 @@
-import { IsEnum, IsNotEmpty, IsString, isString } from "class-validator"
+import { IsDateString, IsEnum, IsIn, IsNotEmpty, IsString, isString } from "class-validator"
 import {TournamentCategory} from '../../enum/tournamentCategory.enum'
+
+const allowedCategories = ['PUBG', 'COD', 'FIFA', 'Fortnite', 'CounterStrike'];
+
 
 export class CreateTournamentDto{
 
     @IsString()
     @IsNotEmpty()
-    name:string
-
+    name: string;
+  
+    @IsString()
     @IsNotEmpty()
-    date:Date
-
+    @IsIn(allowedCategories, {
+      message: (args: any) => `${args.value} is not a valid category!`
+    })
+    category: string;
+  
+    @IsDateString()
     @IsNotEmpty()
-    @IsEnum(TournamentCategory,{ message: 'Category must be one of: PUBG, COD, FIFA, Fortnite, CounterStrike' })
-    category:TournamentCategory
-
+    date: string;
+  
+    @IsString()
     @IsNotEmpty()
-    time:string
+    time: string;
 
 }
